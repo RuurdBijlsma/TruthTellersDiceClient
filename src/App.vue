@@ -1,32 +1,33 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+    <v-app>
+        <v-app-bar app color="primary" dark>
+            <v-app-bar-title class="app-title">Truth Teller's Dice</v-app-bar-title>
+            <v-spacer/>
+            <v-btn icon>
+                <v-icon>mdi-cog</v-icon>
+            </v-btn>
+        </v-app-bar>
+        <v-main>
+            <router-view/>
+        </v-main>
+    </v-app>
 </template>
 
+<script>
+
+export default {
+    name: 'App',
+    data: () => ({}),
+};
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+html, body {
+    user-select: none;
+    overflow-y: auto !important;
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.app-title > * {
+    min-width: 100% !important;
 }
 </style>
