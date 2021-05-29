@@ -4,30 +4,39 @@
             Model visualisation
         </v-card-title>
         <v-card-text>
-            <div class="graph"></div>
+            <svg id="mySVG" width="600" height="600">
+                <g class="links"/>
+                <g class="nodes"/>
+            </svg>
         </v-card-text>
         <v-card-actions>
-            <v-btn text>Hi</v-btn>
+            <v-switch v-model="relationLabels" label="Relation labels"/>
         </v-card-actions>
     </v-card>
 </template>
 
 <script>
+//Todo
+//Legend for meaning of colors
+
 import * as d3 from "d3";
 
 export default {
     name: "ModelVisualization",
     data: () => ({
         simulation: null,
+        relationLabels: false,
+        linkText: null,
+        links: null,
     }),
     mounted: async function () {
         const {worlds, connection} = await fetch('./worlds.json').then(j => j.json());
-        let nodes = worlds.map(w => ({id: w}));
+        let preNodes = worlds.map(w => ({id: w}));
         console.log(worlds, connection);
-        let links = [];
+        let preLinks = [];
         for (let i = 0; i < worlds.length; i++) {
             let worldA = worlds[i];
-            for (let j = 0; j < worlds.length; j++) {
+            for (let j = i; j < worlds.length; j++) {
                 if (j === i) continue;
                 let worldB = worlds[j];
                 let relation = connection[i][j];
@@ -37,40 +46,77 @@ export default {
                         .filter(s => s !== '0')
                         .map(a => (+a + 9).toString(36).toUpperCase())
                         .join(',');
-                    links.push({source: worldA, target: worldB, relation: agents})
+                    preLinks.push({source: worldA, target: worldB, relation: agents})
                     console.log(`relation ${worldA}-${worldB}=${agents}`);
                 }
             }
         }
-        console.log({nodes, links});
 
+        this.svg = d3.select('#mySVG')
+        const width = +this.svg.attr('width');
+        const height = +this.svg.attr('height');
+        const nodesG = this.svg.select("g.nodes")
+        const linksG = this.svg.select("g.links")
 
-        const width = 400,
-            height = 400;
-        // const data = await fetch('./links.json').then(j => j.json());
-        //
-        // const links = data.links.map(d => Object.create(d));
-        // const nodes = data.nodes.map(d => Object.create(d));
+        const graphs = {nodes: preNodes, links: preLinks};
 
-        const simulation = d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id))
-            .force("charge", d3.forceManyBody().strength(-500))
+        this.svg.append('defs').append('marker')
+            .attr('id', 'arrowhead')
+            .attr('viewBox', '-0 -5 10 10')
+            .attr('refX', 0)
+            .attr('refY', 0)
+            .attr('orient', 'auto')
+            .attr('markerWidth', 13)
+            .attr('markerHeight', 13)
+            .attr('xoverflow', 'visible')
+            .append('svg:path')
+            .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+            .attr('fill', '#999')
+            .style('stroke', 'none');
+
+        const simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(d => d.id))
+            .force("charge", d3.forceManyBody().strength(-300))
             .force("x", d3.forceX())
             .force("y", d3.forceY())
-            .force('collide', d3.forceCollide(d => 40))
+            .force("center", d3.forceCenter(width / 2, height / 2))
 
-        const svg = d3.select(".graph")
-            .append("svg")
-            .attr("viewBox", [-width / 2, -height / 2, width, height])
 
-        const link = svg.append("g")
-            .attr("fill", "none")
-            .attr("stroke-width", 1.5)
-            .selectAll("path")
-            .data(links)
-            .join("path")
-            .attr("stroke", 'red')
-            .attr("marker-end", d => `url(${new URL(`#arrow-${d.type}`, location)})`);
+        let linksData = graphs.links.map(link => {
+            const obj = link;
+            obj.source = link.source;
+            obj.target = link.target;
+            return obj;
+        })
+
+        this.links = linksG
+            .selectAll("g")
+            .data(graphs.links)
+            .enter().append("g")
+            .attr("cursor", "pointer");
+
+        if (this.relationLabels)
+            this.addLinkText();
+
+        const relationToColor = {
+            'A': 'red',
+            'B': 'green',
+            'C': 'blue',
+            'A,B': 'orange',
+            'A,C': 'purple',
+            'B,C': 'cyan',
+            'A,B,C': 'black',
+        }
+
+        const linkLines = this.links
+            .append("path")
+            .attr("id", function (_, i) {
+                return "path" + i
+            })
+            .attr('stroke', d => relationToColor[d.relation])
+            .attr('opacity', 0.75)
+            .attr("stroke-width", 1)
+            .attr("fill", "transparent")
 
         const drag = simulation => d3.drag()
             .on("start", (event, d) => {
@@ -87,56 +133,106 @@ export default {
                 d.fx = null;
                 d.fy = null;
             })
-
-        const node = svg.append("g")
-            .attr("fill", "currentColor")
-            .attr("stroke-linecap", "round")
-            .attr("stroke-linejoin", "round")
+        const nodes = nodesG
             .selectAll("g")
-            .data(nodes)
-            .join("g")
+            .data(graphs.nodes)
+            .enter().append("g")
+            .attr("cursor", "pointer")
             .call(drag(simulation));
 
-        node.append("circle")
-            .attr("stroke", "white")
-            .attr("stroke-width", 1.5)
-            .attr("r", 15)
-            .attr('fill', d => '#6baed6');
+        const circles = nodes.append("circle")
+            .attr("r", 12)
+            .attr("fill", "000000")
 
-        node.append("text")
+        nodes.append("title")
+            .text(function (d) {
+                return d.id;
+            });
+
+        nodes.append("text")
             .attr("text-anchor", "middle")
             .attr("x", 0)
-            .attr("y", "0.31em")
+            .attr("y", "2em")
             .text(d => d.id)
             .clone(true).lower()
             .attr("fill", "none")
             .attr("stroke", "white")
             .attr("stroke-width", 3);
 
-        node.on('dblclick', (e, d) => console.log(nodes[d.index]))
+        simulation
+            .nodes(graphs.nodes)
+            .on("tick", ticked);
 
-        const linkArc = d => `M${d.source.x},${d.source.y}A0,0 0 0,1 ${d.target.x},${d.target.y}`;
-        simulation.on("tick", () => {
-            link.attr("d", linkArc);
-            node.attr("transform", d => `translate(${d.x},${d.y})`);
-        });
+        simulation.force("link", d3.forceLink().links(linksData)
+            .id(d => d.id)
+            .distance(250));
+
+        function ticked() {
+            linkLines.attr("d", function (d) {
+                const dx = (d.target.x - d.source.x),
+                    dy = (d.target.y - d.source.y),
+                    dr = Math.sqrt(dx * dx + dy * dy);
+                return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+            });
+
+            // recalculate and back off the distance
+            linkLines.attr("d", function (d) {
+
+                // length of current path
+                const pl = this.getTotalLength(),
+                    // radius of circle plus backoff
+                    r = (12),
+                    // position close to where path intercepts circle
+                    m = this.getPointAtLength(pl - r);
+
+                const dx = m.x - d.source.x,
+                    dy = m.y - d.source.y,
+                    dr = Math.sqrt(dx * dx + dy * dy);
+
+                return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + m.x + "," + m.y;
+            });
+
+            if (this.linkText) {
+                this.linkText
+                    .attr("x", function (d) {
+                        return (d.source.x + (d.target.x - d.source.x) * 0.5);
+                    })
+                    .attr("y", function (d) {
+                        return (d.source.y + (d.target.y - d.source.y) * 0.5);
+                    })
+
+            }
+
+            nodes.attr("transform", d => `translate(${d.x}, ${d.y})`);
+        }
     },
     methods: {
-        dragStart(d) {
-            if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
+        addLinkText() {
+            this.linkText = this.links
+                .append("text")
+                .attr('class', 'link-text')
+                .attr("dy", -4)
+                .append("textPath")
+                .attr("xlink:href", function (_, i) {
+                    return "#path" + i
+                })
+                .attr("startOffset", "50%")
+                .attr('stroke', '#000000')
+                .attr('opacity', 1)
+                .text(d => d.relation);
         },
-        dragMove(d) {
-            d.fx = d3.event.x;
-            d.fy = d3.event.y;
+        removeLinkText() {
+            this.svg.selectAll('text.link-text').remove();
+        }
+    },
+    watch: {
+        relationLabels() {
+            if (this.relationLabels)
+                this.addLinkText();
+            else
+                this.removeLinkText();
         },
-        dragEnd(d) {
-            if (!d3.event.active) this.simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-        },
-    }
+    },
 }
 </script>
 
