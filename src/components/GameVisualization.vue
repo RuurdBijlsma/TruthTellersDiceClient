@@ -4,7 +4,7 @@
             Game visualisation
         </v-card-title>
         <v-card-text>
-            stuff
+            Rolled dice per player: {{ dice }}
         </v-card-text>
         <v-card-actions>
             <v-btn text>Bye</v-btn>
@@ -13,8 +13,15 @@
 </template>
 
 <script>
+import {mapState} from "vuex";
+
 export default {
     name: "GameVisualization",
+    computed: {
+        ...mapState({
+            dice: state => state.game.dice,
+        }),
+    },
 }
 </script>
 

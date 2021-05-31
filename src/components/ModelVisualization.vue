@@ -4,13 +4,21 @@
             Model visualisation
         </v-card-title>
         <v-card-text>
-            <svg class="svg" width="600" height="600">
+            <svg class="svg" width="600" height="520">
                 <g class="links"/>
                 <g class="nodes"/>
             </svg>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="actions">
             <v-switch v-model="relationLabels" label="Relation labels"/>
+            <div>
+                <span class="mr-2">Connection matrix step</span>
+                <v-chip-group mandatory v-model="selectedMatrix" active-class="primary--text">
+                    <v-chip :key="i - 1" v-for="i in matrices.length">
+                        {{ i }}
+                    </v-chip>
+                </v-chip-group>
+            </div>
         </v-card-actions>
     </v-card>
 </template>
@@ -20,6 +28,7 @@
 //Legend for meaning of colors
 
 import * as d3 from "d3";
+import {mapState} from "vuex";
 
 export default {
     name: "ModelVisualization",
@@ -30,30 +39,12 @@ export default {
         linkText: null,
         links: null,
         graph: null,
+        socket: null,
+        serverConnecting: true,
+        selectedMatrix: 0,
     }),
-    mounted: async function () {
-        const {worlds, connection} = await fetch('./worlds.json').then(j => j.json());
-        let nodes = worlds.map(w => ({id: w}));
-        let links = [];
-        for (let i = 0; i < worlds.length; i++) {
-            let worldA = worlds[i];
-            for (let j = i; j < worlds.length; j++) {
-                if (j === i) continue;
-                let worldB = worlds[j];
-                let relation = connection[i][j];
-                if (relation !== 0) {
-                    let agents = relation.toString()
-                        .split('')
-                        .filter(s => s !== '0')
-                        .map(a => (+a + 9).toString(36).toUpperCase())
-                        .join(',');
-                    links.push({source: worldA, target: worldB, relation: agents});
-                }
-            }
-        }
-        this.graph = {nodes: nodes, links: links};
-        console.log(this.graph);
-        [this.svg, this.simulation] = this.buildChart(this.graph);
+    async mounted() {
+        this.updateGraph();
     },
     methods: {
         buildChart(graph) {
@@ -198,7 +189,6 @@ export default {
             return [svg, simulation];
         },
         addLinkText() {
-            const dark = this.$vuetify.theme.dark;
             this.linkText = this.links
                 .append("text")
                 .attr('class', 'link-text')
@@ -216,6 +206,8 @@ export default {
             this.svg.selectAll('text.link-text').remove();
         },
         destroyChart() {
+            if (this.svg === null)
+                return;
             this.svg.selectAll("*").remove();
             this.svg
                 .append('g')
@@ -224,6 +216,35 @@ export default {
                 .append('g')
                 .attr('class', 'nodes');
             this.simulation.stop();
+        },
+        updateGraph() {
+            if (!this.matrices[this.selectedMatrix] || this.worlds.length === 0)
+                return;
+            const worlds = this.worlds.map(w => w.join(','));
+            const connection = this.matrices[this.selectedMatrix];
+            console.log({worlds, connection});
+            let nodes = worlds.map(w => ({id: w}));
+            let links = [];
+            for (let i = 0; i < worlds.length; i++) {
+                let worldA = worlds[i];
+                for (let j = i; j < worlds.length; j++) {
+                    if (j === i) continue;
+                    let worldB = worlds[j];
+                    let relation = connection[i][j];
+                    if (relation !== 0) {
+                        let agents = relation.toString()
+                            .split('')
+                            .filter(s => s !== '0')
+                            .map(a => (+a + 9).toString(36).toUpperCase())
+                            .join(',');
+                        links.push({source: worldA, target: worldB, relation: agents});
+                    }
+                }
+            }
+            this.graph = {nodes: nodes, links: links};
+            console.log(this.graph);
+            this.destroyChart();
+            [this.svg, this.simulation] = this.buildChart(this.graph);
         },
     },
     computed: {
@@ -238,12 +259,28 @@ export default {
                 'B,C': dark ? 'cyan' : 'cyan',
                 'A,B,C': dark ? 'white' : 'black',
             }
-        }
+        },
+        ...mapState({
+            dice: state => state.game.dice,
+            worlds: state => state.game.worlds,
+            matrices: state => state.game.matrices,
+        }),
     },
     watch: {
+        selectedMatrix() {
+            this.updateGraph();
+        },
+        dice() {
+            this.updateGraph();
+        },
+        worlds() {
+            this.updateGraph();
+        },
+        matrices() {
+            this.updateGraph();
+        },
         '$vuetify.theme.dark'() {
-            this.destroyChart();
-            [this.svg, this.simulation] = this.buildChart(this.graph);
+            this.updateGraph();
         },
         relationLabels() {
             if (this.relationLabels)
@@ -257,6 +294,12 @@ export default {
 
 <style scoped>
 .model-vis {
+    max-width: 620px;
+}
 
+.actions {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
 }
 </style>
