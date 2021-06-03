@@ -1,4 +1,6 @@
-# truth-tellers-dice
+# TruthTellersDice
+
+Make sure the [server](https://github.com/ruurdbijlsma/truthtellersdiceserver) is running before using this.
 
 ## Project setup
 ```
