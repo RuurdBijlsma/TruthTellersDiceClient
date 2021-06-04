@@ -1,0 +1,63 @@
+\documentclass{article}
+\usepackage{biblatex}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, total={5in, 11.5in}]{geometry}
+\usepackage{hyperref}
+\usepackage{caption}
+\title{Truth teller's dice}
+\begin{document}
+\maketitle
+\section{Using Epistemic Logic}
+This section should give an idea as to how epistemic logic will be used in this project. On top of this, we also aim to use public announcement logic in this project.
+\begin{enumerate}
+    \item A game with 3 players, each with three 3-sided dice, will have the following atoms:\\
+    (0*1), (1*1), (2*1), (3*1), ..., (9*1)\\
+    (0*2), (1*2), (2*2), (3*2), ..., (9*2)\\
+    (0*3), (1*3), (2*3), (3*3), ..., (9*3)\\
+    
+    \textit{It is a good start that you list all possible bids: (0*1), (1*1), …, (9*3). You call them atoms which means that you treat them as propositions. It is correct. But you also need to consider how many possible worlds you need and what different possible worlds stand for.}
+    
+    \item Before looking at their own dice each agent considers all these atoms possible ($M_a(0*1)$, ..., $M_c(9*3)$)
+    
+    \textit{You need to define what possible worlds are, i.e. the domain of your whole model, and define the epistemic relation R\_i for each agent a, b, c. With R\_i, you can define formulas ($M_a(0*1)$, ..., $M_c(9*3)$)}
+    
+    \item After looking at their own dice each agent can eliminate some possibilities (if agent B has $[1, 1, 2]$ as dice, then $K_b \neg (9 * 3)$, $K_b \neg (8 * 3)$, $K_b \neg (7 * 3)$, $K_b \neg (9 * 1)$, $K_b \neg (9 * 2)$, $K_b \neg (8 * 2)$.)
+    
+    \textit{After looking at their own dice, each of them ‘privately’ knows some situations impossible. This step actually is a private announcement. You can only tackle the process by cutting some epistemic relations for each agent. }
+    
+    \item The game starts when the first player makes a bid, for example, agent A announces he believes there are seven dice with a three on on it. This makes it common knowledge that agent A believes this is possible, so $CM_a(7 * 3)$.
+    \textit{Good formalization.}
+    
+    \item Because now every agent knows that agent a believes (7 * 3) is possible, every agent now also knows agent A has at least one die with a three (because there are only 9 dice in total, and agent A has three of them. $C \neg (0 * 3)$, it's now common knowledge that (0 * 3) is impossible. Agents that have a 3 themselves are able to eliminate more possibilities.
+    
+    \textit{In your final project, you need to formulate this step explicitly with public announcement operator and need to show how the model is changed by the new information.}
+    
+    \item After agent A's bid, it's now agent B's turn. Agent B knows (7 * 3) is not possible ($K_b \neg (7 * 3)$ from (3)), so agent B must challenge the previous bid.
+    
+    \textit{In your example, B’s challenge must make A lose one dice. In your final project, can you elaborate which types of strategies you mentioned can promote the efficiency of the challenge. That would be a very interesting result.}
+    
+    \item After agent B's challenge, everyone reveals their dice and agent A will lose one die because he made a bid that turned out not to be true. This goes on until there is only one person with dice left.
+
+    
+\end{enumerate}
+
+\end{document}
+
+%1. A game with 3 players, each with three 3-sided dice, will have the following atoms:
+%(0*1), (1*1), (2*1), (3*1), ..., (9*1), (0*2), (1*2), (2*2), (3*2), ..., (9*2), (0*3), (1*3), (2*3), (3*3), ..., (9*3)
+% It is a good start that you list all possible bids: (0*1), (1*1), …, (9*3). You call them atoms which means that you treat them as propositions. It is correct. But you also need to consider how many possible worlds you need and what different possible worlds stand for.
+
+
+%1.	It is a good start that you list all possible bids: (0*1), (1*1), …, (9*3). You call them atoms which means that you treat them as propositions. It is correct. 
+
+
+% How many possible worlds are needed? 27 possible worlds
+% What different possible worlds stand for/define what possible worlds are? i.e., % Define model domain and define the epistemic relation R_i for each agent a,b,c. 
+
+% With R_i, you can define formulas M_a (0*1), M_a (0*2),….
+
+
+
+
+
+%
