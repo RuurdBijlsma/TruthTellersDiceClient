@@ -1,7 +1,7 @@
 \documentclass{article}
 \usepackage{biblatex}
 \usepackage[utf8]{inputenc}
-\usepackage[a4paper, total={5in, 11.5in}]{geometry}
+\usepackage[a4paper]{geometry}
 \usepackage{hyperref}
 \usepackage{caption}
 \usepackage{graphicx}
@@ -40,8 +40,8 @@ During Liar's dice a big part of the game is bluffing your bid, to not reveal in
 \subsection*{Setup} %ruurd
 At the start of each round every player rolls their dice and only looks at them their selves, no one else can see it.
 
-\subsection*{Gameplay} %ruurd
-The first agent makes a bid based on what it knows to be possible. A bid consists of a face value of the die, along with the total number of dice on the deck with that face value. For example, an agent can bid that there are two dice with the face value “1” on them. There are two possible bids that an agent can be make – 1) A bid that increases the quantity of dice retaining the number of pips (face value) of the previous bid, or 2) A bid that increases the number of pips retaining the current dice quantity. If one increases the pips, that player is able to call the number of dice starting from 1 again.
+\subsection*{Gameplay Rules} %ruurd
+An agent can make a bid based on what it knows to be possible. A bid consists of a face value of the die, along with the total number of dice on the deck with that face value. For example, an agent can bid that there are two dice with the face value “1” on them. There are two possible bids that an agent can be make, 1) A bid that increases the quantity of dice retaining the number of pips (face value) of the previous bid, or 2) A bid that increases the number of pips retaining the current dice quantity. If one increases the pips, that player is able to call the number of dice starting from 1 again.
 
 After each bid, the next agent decides if it must challenge the previous bid, or to continue with a new bid. If it knows that the previous bid is impossible (that there could not be that many dice of the same number of pips) based on its knowledge, then it challenges the bid; else the agent makes a new bid that it considers to be possible. 
 
@@ -52,8 +52,8 @@ The game ends when only one agent is left with some dice, and this agent is the 
 
 \section*{Game implementation}
 \subsection*{Initial configuration}
-First an initial world list is created where all possible combinations of dice get listed. From these initial worlds, a connection matrix is set up where every element is the connection between two worlds. These elements contain who is not able to distinguish the two worlds. Besides this, two empty knowledge bases are initiated: one containing the logical knowledge of the agents and the other containing the bids.\\
-After this the players get to roll their dice and look at their dice. The connection matrix gets updated based on the knowledge of the player. The output of the server when the game is initiated can be seen in figure \ref{fig:initc}
+First, an initial world list is created where all possible combinations of dice get listed. From these initial worlds, a connection matrix is set up where every element is the connection between two worlds. These elements contain which agent is not able to distinguish the two worlds. Besides this, two empty knowledge bases are initiated: one containing the logical knowledge of the agents and the other containing the bids.\\
+In the next step, the agents’ dice are rolled, and each agent knows the outcomes of its own dice roll. The connection matrix gets updated based on the knowledge of the agent. The output of the server during the initial game state can be seen in figure \ref{fig:initc}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{img/initialconfig.png}
@@ -61,9 +61,10 @@ After this the players get to roll their dice and look at their dice. The connec
     \label{fig:initc}
 \end{figure}
 \subsection*{Rounds}
-The first player either bids on the current dice, or a dice higher than the current dice. 
-For every bid the player makes, the bid knowledge base as well as the logic knowledge base gets updated. When a player bids the maximum number of dice, all other players know what dice this player has because he did not lie. Therefore, the connection matrix gets updated. When the next player does not challenge the bid, all the other players also know what dice this player has, so the matrix gets updated yet again.\\
-If a player loses a challenge or loses to a challenge, the losing player will lose a die and everything gets reinitiated.
+The first agent initiates the game by making a bid based on the rules mentioned in the Gameplay rules section. The bid knowledge base as well as the logic knowledge base gets updated as the game progresses with each agent making a new bid.  Since the bids are made based on the possible world scenarios with respect to that agent, when an agent, say Agent-1 bids the maximum quantity of a specific pip, the other two agents know the outcome of Agent-1. Therefore, the connection matrix gets updated accordingly. When the next agent, say Agent-2 does not challenge the bid,  the other two agents also know what dice Agent-2 has, so the matrix gets updated again.\\
+
+If an agent loses a challenge or loses to a challenge, that agent loses a die, and everything gets reinitiated.
+
 
 An example of how a part of a round plays out can be seen in figure \ref{fig:halfaround}. the "quantities" refer to the highest bid per pip until now. So $[1\ 2]$ means someone bid 1 on 1 pip and 2 on 2 pips.
 \begin{figure}[h!]
@@ -78,7 +79,7 @@ We implemented this project in two parts, the client as a web application, and t
 \subsection*{Model visualization} %Ruurd
 The model is visualized in the client using d3.js. The labels for the relations can be toggled, and it is possible to switch between Kripke models representing steps. This example model shows a game with two sided dice, 1 die per player, and three players. The labels for the worlds show what die each player has in that world. The unconnected worlds are worlds that are not possible anymore, no player considers them possible anymore. In this example, player A rolled 1, player B rolled 1, and player C rolled 2.
 \begin{figure}[h]
-    \includegraphics[width=0.8\textwidth]{img/visualization.png}
+    \includegraphics[width=0.8\textwidth]{img/screenshot.png}
     \centering
     \caption{Model visualization after players have looked at their dice and one bid has been made.}
     \label{fig:liarsdice}
