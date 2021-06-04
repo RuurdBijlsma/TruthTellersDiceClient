@@ -5,7 +5,7 @@
 \usepackage{hyperref}
 \usepackage{caption}
 \usepackage{graphicx}
-
+\usepackage{float}
 \title{Truth teller's dice}
 \author{Ruurd Bijlsma (S3860469) \\
 Bharath Kumar Musuadhi Rajan (S4065476) \\
@@ -78,13 +78,24 @@ An example of how a part of a round plays out can be seen in figure \ref{fig:hal
 We implemented this project in two parts, the client as a web application, and the server as a Python program. This is because a user interface is easier to create in the web, and the logic part is easier to create in Python. The two parts communicate through WebSockets, the client connects to the server and sends a 'start game' event, the server then starts a game and saves it for this client, the server then sends information about the game through events to the client. The client can still request extra information or give commands through events, because an instance of the game is saved per client. 
 \subsection*{Model visualization} %Ruurd
 The model is visualized in the client using d3.js. The labels for the relations can be toggled, and it is possible to switch between Kripke models representing steps. This example model shows a game with two sided dice, 1 die per player, and three players. The labels for the worlds show what die each player has in that world. The unconnected worlds are worlds that are not possible anymore, no player considers them possible anymore. In this example, player A rolled 1, player B rolled 1, and player C rolled 2.
-\begin{figure}[h]
+\begin{figure}[ht]
     \includegraphics[width=0.8\textwidth]{img/screenshot.png}
     \centering
     \caption{Model visualization after players have looked at their dice and one bid has been made.}
     \label{fig:liarsdice}
 \end{figure}
+
 \subsection*{Game visualization}% bharat
+For the visualizing the gameplay, a simulation consisting of three agents with two dice each is implemented as part of the draft version. In the final version, as the game progresses, the bids made by each agent will be reflected in the visuals, and gets updated as the bid value changes. The game visuals also indicate the face values of the dice each agent has, any challenge made by the agents, and displaying the winner at the end of the game simulation. 
+
+\begin{figure}[h]
+    \includegraphics[width=0.8\textwidth]{img/GV1.png}
+    \centering
+    \caption{Game visualization at the initial stage when the dice are rolled}
+    \label{fig:liarsdiceGV}
+\end{figure}
+
+
 
 \section*{Logical modelling}
 \subsection*{Example of a game}
