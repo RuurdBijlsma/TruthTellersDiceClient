@@ -1,21 +1,6 @@
-# TruthTellersDice
+## Usage
+Run `generate.sh`
 
-Make sure the [server](https://github.com/ruurdbijlsma/truthtellersdiceserver) is running before using this.
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Requirements before running generate.sh
+* `pandoc` in path, install from https://pandoc.org/

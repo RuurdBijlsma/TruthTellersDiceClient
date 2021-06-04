@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{biblatex}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, total={5in, 11.5in}]{geometry}
+\usepackage{hyperref}
+\usepackage{caption}
+
+\title{Truth teller's dice}
+\author{Group 1}
+
+\begin{document}
+
+\maketitle
+
+\section{Project Idea} %jordi
+For this project, we intend to implement a modified version of the game ‘Liar’s dice’ using epistemic logic. The objective of the project is to explore and analyse different strategies that would emerge as a result of modelling the game using epistemic logic. Our initial approach is to apply the concepts of public announcement and common knowledge in simulating the agents' knowledge and belief over the game rounds, and then showing the resulting best strategy. We use the same rules as in the original game of 'Liar's dice' but simplify the it by limiting the number of players and the number of dice to 3. We also restrict the face values of each die to 1, 2 and 3. We will reduce this further if the Kripke model is still unreasonably large. And the important modification is that we don't allow 'lying', which means we restrict the agents from making bids that the agent knows would not be possible. Therefore, if an agent has only 1 * '3' in its outcome, then the agent is not allowed to announce a bid of more than 7 for '3' (Since the total number of possible outcomes for '3' is 9 and the agent \textit{knows} that it is not possible for '3' to be more than 7 as the agent's own outcome has only one die with the face value '3').
+
+\section{Implementation} %ruurd
+Our GUI implementation of the game has all three players as agents, with a visualization of the Kripke model reflecting the game state and buttons to manage the configuration of the agents. We will implement multiple strategies for the agents playing the game. Each agent will have a set of legal moves to make based on the game rules, and the moves are picked based on the agent's strategy. The following strategies could be implemented:
+\begin{itemize}
+    \item Bid one higher than the previous bid. Pick a legal move that is as close as possible to the previous bid.
+    \item Bid as high as possible. Regardless of the previous bid, the agent always bids the highest possible legal move.
+    \item Random bid. Regardless of the previous bid, randomly pick a legal move.
+    \item Eliminate as few worlds as possible. Bid whichever legal move would eliminate the fewest possible worlds.
+    \item Eliminate as many worlds as possible. Bid whichever legal move would eliminate the most possible worlds.
+\end{itemize}
+
+\subsection{Using Epistemic Logic}
+
+This section should give an idea as to how epistemic logic will be used in this project. On top of this, we also aim to use public announcement logic in this project.
+\begin{enumerate}
+    \item A game with 3 players, each with three 3-sided dice, will have the following atoms:\\
+    (0*1), (1*1), (2*1), (3*1), ..., (9*1)\\
+    (0*2), (1*2), (2*2), (3*2), ..., (9*2)\\
+    (0*3), (1*3), (2*3), (3*3), ..., (9*3)\\
+    \item Before looking at their own dice each agent considers all these atoms possible ($M_a(0*1)$, ..., $M_c(9*3)$)
+    \item After looking at their own dice each agent can eliminate some possibilities (if agent B has $[1, 1, 2]$ as dice, then $K_b \neg (9 * 3)$, $K_b \neg (8 * 3)$, $K_b \neg (7 * 3)$, $K_b \neg (9 * 1)$, $K_b \neg (9 * 2)$, $K_b \neg (8 * 2)$.)
+    \item The game starts when the first player makes a bid, for example, agent A announces he believes there are seven dice with a three on on it. This makes it common knowledge that agent A believes this is possible, so $CM_a(7 * 3)$.
+    \item Because now every agent knows that agent a believes (7 * 3) is possible, every agent now also knows agent A has at least one die with a three (because there are only 9 dice in total, and agent A has three of them. $C \neg (0 * 3)$, it's now common knowledge that (0 * 3) is impossible. Agents that have a 3 themselves are able to eliminate more possibilities.
+    \item After agent A's bid, it's now agent B's turn. Agent B knows (7 * 3) is not possible ($K_b \neg (7 * 3)$ from (3)), so agent B must challenge the previous bid.
+    \item After agent B's challenge, everyone reveals their dice and agent A will lose one die because he made a bid that turned out not to be true. This goes on until there is only one person with dice left.
+\end{enumerate}
+
+
+
+
+%\bibliography{references}
+\end{document}
+
+%edit 1
+%The players in the game are each provided with their own set of dice. When the game begins, the players roll their dice and keep the knowledge of their dice outcome to themselves. The idea of this game is that the players have to predict the total number of dice among all the players having a certain face value and then make a bid. The first player then calls a face value on the dice and afterwards places a bid, which contains the belief of how many dice of that face value are in the combined outcome of all players. A player can up the bid or challenge the bid, where if the player challenges the bid and there are less dice faced up on the table than the bid, the "lying player" loses a die, while if this is not the case, the challenging player loses a die.
