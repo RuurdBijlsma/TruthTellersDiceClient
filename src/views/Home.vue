@@ -34,7 +34,7 @@ export default {
             if (!errorShown) {
                 errorShown = true;
                 Swal.fire({
-                    title: `Can't connect to server`,
+                    title: `Can't connect to server, run the TruthTellersDice server before loading this page.`,
                     text: `Server IP ${this.$store.state.url}`,
                     icon: 'error',
                 });

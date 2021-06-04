@@ -2,6 +2,8 @@
 
 Make sure the [server](https://github.com/ruurdbijlsma/truthtellersdiceserver) is running before using this.
 
+![f](https://github.com/ruurdbijlsma/truthtellersdiceserver/blob/master/.gh/screenshot.png?raw=true)
+
 ## Project setup
 ```
 npm install
