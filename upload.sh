@@ -1,4 +1,4 @@
-./generate.sh
+./generator/generate.sh
 
 # Commit and upload to GitHub
 git add -A
