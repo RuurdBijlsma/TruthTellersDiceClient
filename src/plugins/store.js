@@ -13,12 +13,14 @@ export default new Vuex.Store({
             dice: [],
             worlds: [],
             matrices: [],
+            logicLines: [],
         }
     },
     mutations: {
         dice: (state, dice) => state.game.dice = dice,
         worlds: (state, worlds) => state.game.worlds = worlds,
         matrices: (state, matrices) => state.game.matrices = matrices,
+        logicLines: (state, logicLines) => state.game.logicLines = logicLines,
     },
     actions: {},
     modules: {}

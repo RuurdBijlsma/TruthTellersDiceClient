@@ -18,6 +18,9 @@ import Swal from "sweetalert2";
 export default {
     name: 'Home',
     components: {LogicLines, ModelVisualization, GameVisualization},
+    data:()=>({
+
+    }),
     beforeDestroy() {
         this.socket.destroy();
     },
@@ -66,6 +69,11 @@ export default {
                 console.log('receive worlds')
                 console.log(worlds);
                 this.$store.commit('worlds', worlds);
+            });
+            this.socket.on('logic_lines', lines => {
+                console.log('receive logic_lines')
+                console.log(lines);
+                this.$store.commit('logicLines', lines);
             });
         }
     }
