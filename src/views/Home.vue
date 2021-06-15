@@ -15,6 +15,14 @@ import LogicLines from "@/components/LogicLines";
 import io from "socket.io-client";
 import Swal from "sweetalert2";
 
+// TODO:
+// Add home page
+// Add support for choosing strategy
+// Add button to reset game
+// per round ui:
+// add logic lines per round
+// add matrices per round nice ui
+
 export default {
     name: 'Home',
     components: {LogicLines, ModelVisualization, GameVisualization},

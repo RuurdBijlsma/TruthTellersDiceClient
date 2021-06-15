@@ -8,7 +8,7 @@ export default new Vuex.Store({
         url: 'ws://localhost:5000',
         game: {
             nPlayers: 3,
-            nDice: 1,
+            nDice: 2,
             nDiceSides: 2,
             dice: [],
             worlds: [],
