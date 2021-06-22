@@ -4,7 +4,7 @@
             Logic per step
         </v-card-title>
         <v-card-text>
-            <v-sheet rounded class="mb-2 line-sheet" v-for="(formula, i) in formulas" :key="i" :color="hoverStep === i + 1 ? 'primary' : 'default'">
+            <v-sheet rounded class="mb-2 line-sheet" v-for="(formula, i) in formulas" :key="i" :color="viewedStep === i ? 'primary' : 'default'">
                 <span class="line-number mr-5">{{ i + 1 }}.</span>
                 <vue-mathjax :formula="formula"/>
             </v-sheet>
@@ -36,7 +36,7 @@ export default {
         },
         ...mapGetters(['round']),
         ...mapState({
-            hoverStep: state => state.hoverStep,
+            viewedStep: state => state.viewedStep,
         }),
     }
 }

@@ -16,7 +16,7 @@ export default new Vuex.Store({
         },
         socket: null,
         viewedRound: 0,
-        hoverStep: 0,
+        viewedStep: 0,
         simulationResults:null,
     },
     mutations: {
@@ -30,7 +30,7 @@ export default new Vuex.Store({
         simulationResults: (state, simulationResults) => state.simulationResults = simulationResults,
         viewedRound: (state, viewedRound) => state.viewedRound = viewedRound,
         socket: (state, socket) => state.socket = socket,
-        hoverStep: (state, hoverStep) => state.hoverStep = hoverStep,
+        viewedStep: (state, viewedStep) => state.viewedStep = viewedStep,
     },
     getters: {
         round: state => state.game.rounds[state.viewedRound],

@@ -10,8 +10,8 @@
             <v-switch v-model="relationLabels" label="Relation labels"/>
             <div>
                 <span class="mr-2">Select step</span>
-                <v-chip-group mandatory v-model="selectedMatrix" active-class="primary--text" v-if="matrices">
-                    <v-chip @mouseenter="hoverStep = i" @mouseleave="hoverStep = -1" outlined :key="i - 1" v-for="i in matrices.length">
+                <v-chip-group mandatory v-model="viewedStep" active-class="primary--text" v-if="matrices">
+                    <v-chip outlined :key="i - 1" v-for="i in matrices.length">
                         {{ i }}
                     </v-chip>
                 </v-chip-group>
@@ -38,7 +38,6 @@ export default {
         graph: null,
         socket: null,
         serverConnecting: true,
-        selectedMatrix: 0,
     }),
     async mounted() {
         this.updateGraph();
@@ -215,10 +214,10 @@ export default {
             this.simulation.stop();
         },
         updateGraph() {
-            if (!this.matrices?.[this.selectedMatrix] || this.worlds.length === 0)
+            if (!this.matrices?.[this.viewedStep] || this.worlds.length === 0)
                 return;
             const worlds = this.worlds.map(w => w.join(','));
-            const connection = this.matrices[this.selectedMatrix];
+            const connection = this.matrices[this.viewedStep];
             let nodes = worlds.map(w => ({id: w}));
             let links = [];
             for (let i = 0; i < worlds.length; i++) {
@@ -243,12 +242,12 @@ export default {
         },
     },
     computed: {
-        hoverStep: {
+        viewedStep: {
             get(){
-                return this.$store.state.hoverStep;
+                return this.$store.state.viewedStep;
             },
             set(v){
-                this.$store.commit('hoverStep', v);
+                this.$store.commit('viewedStep', v);
             },
         },
         matrices() {
@@ -299,11 +298,11 @@ export default {
         }),
     },
     watch: {
-        selectedMatrix() {
+        viewedStep() {
             this.updateGraph();
         },
         round() {
-            this.selectedMatrix = 0;
+            this.viewedStep = 0;
             this.updateGraph();
         },
         worlds() {
