@@ -75,12 +75,12 @@ export default {
                         gameData.common_knowledge[i],
                         gameData.players[i],
                         gameData.beliefs[i],
+                        gameData.worlds[i],
                     );
                     rounds.push(round);
                 }
                 console.log({rounds, worlds: gameData.worlds});
                 this.$store.commit('rounds', rounds);
-                this.$store.commit('worlds', gameData.worlds);
             });
             this.socket.on('simulation_data', winners => {
                 console.log('received simulation_data', winners);

@@ -250,6 +250,9 @@ export default {
                 this.$store.commit('viewedStep', v);
             },
         },
+        worlds(){
+            return this.round?.worlds;
+        },
         matrices() {
             return this.round?.matrices;
         },
@@ -294,7 +297,6 @@ export default {
         ...mapGetters(['round']),
         ...mapState({
             nPlayers: state => state.game.nPlayers,
-            worlds: state => state.game.worlds,
         }),
     },
     watch: {

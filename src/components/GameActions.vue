@@ -39,7 +39,7 @@ import {mapActions, mapState} from "vuex";
 export default {
     name: "GameActions",
     data: () => ({
-        strategyItems: ['random', 'first', 'last'],
+        strategyItems: ['Random', 'Lowest', 'Highest'],
         playersItems: [2, 3, 4],
         diceItems: [1, 2, 3, 4],
         sidesItems: [2, 3, 4, 5, 6],

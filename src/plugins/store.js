@@ -7,11 +7,10 @@ export default new Vuex.Store({
     state: {
         url: 'ws://localhost:5000',
         game: {
-            strategy: 'random',
+            strategy: 'Random',
             nPlayers: 3,
             nDice: 2,
             nDiceSides: 2,
-            worlds: [],
             rounds: [],
         },
         socket: null,
@@ -24,7 +23,6 @@ export default new Vuex.Store({
         nPlayers: (state, nPlayers) => state.game.nPlayers = nPlayers,
         nDice: (state, nDice) => state.game.nDice = nDice,
         nDiceSides: (state, nDiceSides) => state.game.nDiceSides = nDiceSides,
-        worlds: (state, worlds) => state.game.worlds = worlds,
         rounds: (state, rounds) => state.game.rounds = rounds,
 
         simulationResults: (state, simulationResults) => state.simulationResults = simulationResults,
