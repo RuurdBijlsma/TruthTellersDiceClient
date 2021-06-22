@@ -3,23 +3,30 @@
         <v-card-title>
             Game visualisation
         </v-card-title>
-        <v-card-text>
-            Rolled dice per player: {{ dice }}
+        <v-card-text v-if="round">
+            Players: {{ round.players }}
+            <br>
+            Rolled dice per player: {{ round.dice }}
+            <br>
+            Common knowledge {{ round.commonKnowledge }}
+            <br>
+            Bids done this round: data not yet available
+            <div v-if="simulationResults">
+                Latest simulation results: {{simulationResults}}
+            </div>
         </v-card-text>
-        <v-card-actions>
-            <v-btn text>Bye</v-btn>
-        </v-card-actions>
     </v-card>
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapGetters, mapState} from "vuex";
 
 export default {
     name: "GameVisualization",
     computed: {
+        ...mapGetters(['round']),
         ...mapState({
-            dice: state => state.game.dice,
+            simulationResults: state=>state.simulationResults,
         }),
     },
 }

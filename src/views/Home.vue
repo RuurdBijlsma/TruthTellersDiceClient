@@ -1,6 +1,9 @@
 <template>
-    <div class="home">
-        <div class="top-pane">
+    <div class="home" :style="{
+        maxHeight: $vuetify.breakpoint.height - $vuetify.application.top - $vuetify.application.bottom + 'px'
+    }">
+        <game-actions class="top-pane"/>
+        <div class="middle-pane">
             <game-visualization class="left-pane"/>
             <model-visualization class="right-pane"/>
         </div>
@@ -14,6 +17,9 @@ import ModelVisualization from "@/components/ModelVisualization";
 import LogicLines from "@/components/LogicLines";
 import io from "socket.io-client";
 import Swal from "sweetalert2";
+import Round from "@/js/Round";
+import {mapActions, mapState} from "vuex";
+import GameActions from "@/components/GameActions";
 
 // TODO:
 // Add home page
@@ -25,20 +31,18 @@ import Swal from "sweetalert2";
 
 export default {
     name: 'Home',
-    components: {LogicLines, ModelVisualization, GameVisualization},
-    data:()=>({
-
-    }),
+    components: {GameActions, LogicLines, ModelVisualization, GameVisualization},
+    data: () => ({}),
     beforeDestroy() {
         this.socket.destroy();
+        this.$store.commit('socket', null);
     },
     mounted() {
         console.log(`Connecting to ${this.$store.state.url}`);
-        this.socket = io(this.$store.state.url);
+        this.$store.commit('socket', io(this.$store.state.url));
         let errorShown = false;
         this.socket.on('connect', () => {
             console.log("CONNECT");
-            this.serverConnecting = false;
         });
         this.socket.on('connect_error', e => {
             console.warn(e.message);
@@ -58,47 +62,58 @@ export default {
         setSocketListeners() {
             this.socket.on('connect', () => {
                 console.log('send start event')
-                let players = this.$store.state.game.nPlayers;
-                let dice = this.$store.state.game.nDice;
-                let sides = this.$store.state.game.nDiceSides;
-                this.socket.emit('start_game', players, dice, sides);
+                this.newGame();
             });
-            this.socket.on('connection_matrices', matrices => {
-                console.log('receive connection_matrix')
-                console.log(matrices);
-                this.$store.commit('matrices', matrices);
+            this.socket.on('game_data', gameData => {
+                console.log('received game_data', gameData);
+                let nRounds = gameData.dice.length;
+                let rounds = [];
+                for (let i = 0; i < nRounds; i++) {
+                    let round = new Round(
+                        gameData.dice[i],
+                        gameData.matrices[i],
+                        gameData.common_knowledge[i],
+                        gameData.players[i],
+                        gameData.beliefs[i],
+                    );
+                    rounds.push(round);
+                }
+                console.log({rounds, worlds: gameData.worlds});
+                this.$store.commit('rounds', rounds);
+                this.$store.commit('worlds', gameData.worlds);
             });
-            this.socket.on('dice', dice => {
-                console.log('receive dice')
-                console.log(dice);
-                this.$store.commit('dice', dice);
+            this.socket.on('simulation_data', winners => {
+                console.log('received simulation_data', winners);
+                this.$store.commit('simulationResults', winners);
             });
-            this.socket.on('worlds', worlds => {
-                console.log('receive worlds')
-                console.log(worlds);
-                this.$store.commit('worlds', worlds);
-            });
-            this.socket.on('logic_lines', lines => {
-                console.log('receive logic_lines')
-                console.log(lines);
-                this.$store.commit('logicLines', lines);
-            });
-        }
-    }
+        },
+        ...mapActions(['newGame']),
+    },
+    computed: {
+        ...mapState({
+            rounds: state => state.game.rounds,
+            worlds: state => state.game.worlds,
+            socket: state => state.socket,
+        }),
+    },
 }
 </script>
 
 <style>
 .home {
-    max-width: 100%;
-    min-width: 100%;
-    max-height: 100%;
-    min-height: 100%;
     display: flex;
     flex-direction: column;
 }
 
 .top-pane {
+    display: flex;
+}
+
+.select-round {
+    text-align: center;
+}
+
+.middle-pane {
     display: flex;
     flex-grow: 1;
 }

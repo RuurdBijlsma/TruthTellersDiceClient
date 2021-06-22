@@ -1,10 +1,7 @@
 <template>
     <v-card outlined class="model-vis">
-        <v-card-title>
-            Model visualisation
-        </v-card-title>
         <v-card-text>
-            <svg class="svg" width="600" height="520">
+            <svg class="svg" width="480" height="420">
                 <g class="links"/>
                 <g class="nodes"/>
             </svg>
@@ -12,9 +9,9 @@
         <v-card-actions class="actions">
             <v-switch v-model="relationLabels" label="Relation labels"/>
             <div>
-                <span class="mr-2">Connection matrix step</span>
-                <v-chip-group mandatory v-model="selectedMatrix" active-class="primary--text">
-                    <v-chip :key="i - 1" v-for="i in matrices.length">
+                <span class="mr-2">Select step</span>
+                <v-chip-group mandatory v-model="selectedMatrix" active-class="primary--text" v-if="matrices">
+                    <v-chip @mouseenter="hoverStep = i" @mouseleave="hoverStep = -1" outlined :key="i - 1" v-for="i in matrices.length">
                         {{ i }}
                     </v-chip>
                 </v-chip-group>
@@ -28,7 +25,7 @@
 //Legend for meaning of colors
 
 import * as d3 from "d3";
-import {mapState} from "vuex";
+import {mapGetters, mapState} from "vuex";
 
 export default {
     name: "ModelVisualization",
@@ -218,11 +215,10 @@ export default {
             this.simulation.stop();
         },
         updateGraph() {
-            if (!this.matrices[this.selectedMatrix] || this.worlds.length === 0)
+            if (!this.matrices?.[this.selectedMatrix] || this.worlds.length === 0)
                 return;
             const worlds = this.worlds.map(w => w.join(','));
             const connection = this.matrices[this.selectedMatrix];
-            console.log({worlds, connection});
             let nodes = worlds.map(w => ({id: w}));
             let links = [];
             for (let i = 0; i < worlds.length; i++) {
@@ -242,41 +238,75 @@ export default {
                 }
             }
             this.graph = {nodes: nodes, links: links};
-            console.log(this.graph);
             this.destroyChart();
             [this.svg, this.simulation] = this.buildChart(this.graph);
         },
     },
     computed: {
+        hoverStep: {
+            get(){
+                return this.$store.state.hoverStep;
+            },
+            set(v){
+                this.$store.commit('hoverStep', v);
+            },
+        },
+        matrices() {
+            return this.round?.matrices;
+        },
         relationToColor() {
             const dark = this.$vuetify.theme.dark;
-            return {
-                'A': dark ? '#ff8888' : 'red',
-                'B': dark ? 'lightgreen' : 'green',
-                'C': dark ? 'skyblue' : 'blue',
-                'A,B': dark ? 'orange' : 'orange',
-                'A,C': dark ? 'magenta' : 'purple',
-                'B,C': dark ? 'cyan' : 'cyan',
-                'A,B,C': dark ? 'white' : 'black',
+            if (this.round.players.length === 2) {
+                return {
+                    'A': dark ? '#ff8888' : 'red',
+                    'B': dark ? 'lightgreen' : 'green',
+                    'A,B': dark ? 'white' : 'black',
+                };
+            } else if (this.round.players.length === 3) {
+                return {
+                    'A': dark ? '#ff8888' : 'red',
+                    'B': dark ? 'lightgreen' : 'green',
+                    'C': dark ? 'skyblue' : 'blue',
+                    'A,B': dark ? 'orange' : 'orange',
+                    'A,C': dark ? 'magenta' : 'purple',
+                    'B,C': dark ? 'cyan' : 'cyan',
+                    'A,B,C': dark ? 'white' : 'black',
+                };
+            } else {
+                return {
+                    'A': dark ? '#ff8888' : 'red',
+                    'B': dark ? 'lightgreen' : 'green',
+                    'C': dark ? 'skyblue' : 'blue',
+                    'D': dark ? '#878787' : '#878787',
+                    'A,B': dark ? 'orange' : 'orange',
+                    'A,C': dark ? 'magenta' : 'purple',
+                    'B,C': dark ? 'cyan' : 'cyan',
+                    'A,D': dark ? '#b86464' : '#9e4a4a',
+                    'B,D': dark ? '#518b42' : '#518b42',
+                    'C,D': dark ? '#425e87' : '#425e87',
+                    'A,B,C': dark ? '#6c6c6c' : '#323232',
+                    'A,B,D': dark ? '#875e3c' : '#875e3c',
+                    'A,C,D': dark ? '#653579' : '#653579',
+                    'B,C,D': dark ? '#428778' : '#428778',
+                    'A,B,C,D': dark ? 'white' : 'black',
+                };
             }
         },
+        ...mapGetters(['round']),
         ...mapState({
-            dice: state => state.game.dice,
+            nPlayers: state => state.game.nPlayers,
             worlds: state => state.game.worlds,
-            matrices: state => state.game.matrices,
         }),
     },
     watch: {
         selectedMatrix() {
             this.updateGraph();
         },
-        dice() {
+        round() {
+            this.selectedMatrix = 0;
             this.updateGraph();
         },
         worlds() {
-            this.updateGraph();
-        },
-        matrices() {
             this.updateGraph();
         },
         '$vuetify.theme.dark'() {

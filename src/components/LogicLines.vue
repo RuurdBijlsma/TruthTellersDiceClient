@@ -1,20 +1,20 @@
 <template>
     <v-card outlined class="logic-lines">
         <v-card-title>
-            Logic Lines
+            Logic per step
         </v-card-title>
         <v-card-text>
-            <div class="mb-2" v-for="(formula, i) in formulas">
+            <v-sheet rounded class="mb-2 line-sheet" v-for="(formula, i) in formulas" :key="i" :color="hoverStep === i + 1 ? 'primary' : 'default'">
                 <span class="line-number mr-5">{{ i + 1 }}.</span>
                 <vue-mathjax :formula="formula"/>
-            </div>
+            </v-sheet>
         </v-card-text>
     </v-card>
 </template>
 
 <script>
 import {VueMathjax} from 'vue-mathjax'
-import {mapState} from "vuex";
+import {mapGetters, mapState} from "vuex";
 
 export default {
     name: "LogicLines",
@@ -27,10 +27,16 @@ export default {
     },
     computed: {
         formulas() {
-            return this.logicLines.map(l => `$${l}$`);
+            if (this.logicLines)
+                return this.logicLines.map(l => `$${l}$`);
+            return [];
         },
+        logicLines() {
+            return this.round?.beliefs;
+        },
+        ...mapGetters(['round']),
         ...mapState({
-            logicLines: state => state.game.logicLines,
+            hoverStep: state => state.hoverStep,
         }),
     }
 }
@@ -43,5 +49,9 @@ export default {
 
 .line-number {
     font-size: 17px;
+}
+
+.line-sheet{
+    padding: 5px 15px;
 }
 </style>
