@@ -10,7 +10,7 @@
                 <span class="line-number mr-5" v-else-if="i === 1">Look at dice: </span>
                 <span class="line-number mr-5" v-else>Player {{
                         round.players[(i - 1) % round.players.length]
-                    }} bids {{ i - 1 }}: ({{ round.bids[i].join(' * ') }})</span>
+                    }} bids: ({{ round.bids[i].join(' * ') }})</span>
                 <vue-mathjax :formula="formula"/>
             </v-sheet>
             <v-sheet rounded class="line-sheet" v-if="round">
