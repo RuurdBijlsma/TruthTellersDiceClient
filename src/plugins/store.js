@@ -12,6 +12,7 @@ export default new Vuex.Store({
             nDice: 2,
             nDiceSides: 2,
             rounds: [],
+            winner: -1,
         },
         socket: null,
         viewedRound: 0,
@@ -24,6 +25,7 @@ export default new Vuex.Store({
         nDice: (state, nDice) => state.game.nDice = nDice,
         nDiceSides: (state, nDiceSides) => state.game.nDiceSides = nDiceSides,
         rounds: (state, rounds) => state.game.rounds = rounds,
+        winner: (state, winner) => state.game.winner = winner,
 
         simulationResults: (state, simulationResults) => state.simulationResults = simulationResults,
         viewedRound: (state, viewedRound) => state.viewedRound = viewedRound,

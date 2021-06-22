@@ -76,10 +76,12 @@ export default {
                         gameData.players[i],
                         gameData.beliefs[i],
                         gameData.worlds[i],
+                        gameData.bids[i],
                     );
                     rounds.push(round);
                 }
-                console.log({rounds, worlds: gameData.worlds});
+                console.log(rounds);
+                this.$store.commit('winner', gameData.players[gameData.players.length - 1][0]);
                 this.$store.commit('rounds', rounds);
             });
             this.socket.on('simulation_data', winners => {

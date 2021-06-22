@@ -4,15 +4,14 @@
             Game visualisation
         </v-card-title>
         <v-card-text v-if="round">
-            Players: {{ round.players }}
-            <br>
-            Rolled dice per player: {{ round.dice }}
-            <br>
+            <div v-for="(player, i) in round.players">
+                Player {{player}} rolled {{round.dice[i]}}
+            </div>
             Common knowledge {{ round.commonKnowledge }}
             <br>
-            Bids done this round: data not yet available
+            Winner this round: {{ winner }}
             <div v-if="simulationResults">
-                Latest simulation results: {{simulationResults}}
+                Latest simulation results: {{ simulationResults }}
             </div>
         </v-card-text>
     </v-card>
@@ -26,7 +25,8 @@ export default {
     computed: {
         ...mapGetters(['round']),
         ...mapState({
-            simulationResults: state=>state.simulationResults,
+            simulationResults: state => state.simulationResults,
+            winner: state => state.game.winner,
         }),
     },
 }
