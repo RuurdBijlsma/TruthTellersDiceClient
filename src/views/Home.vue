@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import Round from "@/js/Round";
 import {mapActions, mapState} from "vuex";
 import GameActions from "@/components/GameActions";
+import Player from "@/js/Player";
 
 // TODO:
 // Add home page
@@ -66,6 +67,7 @@ export default {
             });
             this.socket.on('game_data', gameData => {
                 console.log('received game_data', gameData);
+                let allPlayers = gameData.strategies.map((s, i) => new Player(i, s));
                 let nRounds = gameData.dice.length;
                 let rounds = [];
                 for (let i = 0; i < nRounds; i++) {
@@ -73,10 +75,11 @@ export default {
                         gameData.dice[i],
                         gameData.matrices[i],
                         gameData.common_knowledge[i],
-                        gameData.players[i],
+                        allPlayers.filter(p => gameData.players[i].includes(p.index)),
                         gameData.beliefs[i],
                         gameData.worlds[i],
                         gameData.bids[i],
+                        gameData.losers[i],
                     );
                     rounds.push(round);
                 }

@@ -7,7 +7,7 @@ export default new Vuex.Store({
     state: {
         url: 'ws://localhost:5000',
         game: {
-            strategy: 'Random',
+            strategy: 'Passive',
             nPlayers: 3,
             nDice: 2,
             nDiceSides: 2,

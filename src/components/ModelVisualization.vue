@@ -9,7 +9,7 @@
         <v-card-actions class="actions">
             <v-switch v-model="relationLabels" label="Relation labels"/>
             <div>
-                <span class="mr-2">Select step</span>
+                <span class="mr-2">View step</span>
                 <v-chip-group mandatory v-model="viewedStep" active-class="primary--text" v-if="matrices">
                     <v-chip outlined :key="i - 1" v-for="i in matrices.length">
                         {{ i }}
@@ -216,7 +216,19 @@ export default {
         updateGraph() {
             if (!this.matrices?.[this.viewedStep] || this.worlds.length === 0)
                 return;
-            const worlds = this.worlds.map(w => w.join(','));
+            const worlds = this.worlds.map(w => {
+                let countPerPip = {};
+                for (let pip of w) {
+                    if (!countPerPip.hasOwnProperty(pip))
+                        countPerPip[pip] = 1;
+                    else
+                        countPerPip[pip]++;
+                }
+                // console.log('countPerPip', countPerPip);
+                return Object.entries(countPerPip).map(e => e.reverse().join('*')).join(' ')
+                // return w.join(',')
+            });
+
             const connection = this.matrices[this.viewedStep];
             let nodes = worlds.map(w => ({id: w}));
             let links = [];
@@ -243,14 +255,14 @@ export default {
     },
     computed: {
         viewedStep: {
-            get(){
+            get() {
                 return this.$store.state.viewedStep;
             },
-            set(v){
+            set(v) {
                 this.$store.commit('viewedStep', v);
             },
         },
-        worlds(){
+        worlds() {
             return this.round?.worlds;
         },
         matrices() {

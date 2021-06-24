@@ -10,17 +10,17 @@
                 <span class="line-number mr-5" v-if="i === 0">Initial: </span>
                 <span class="line-number mr-5" v-else-if="i === 1">Look at dice: </span>
                 <span class="line-number mr-5" v-else>Player {{
-                        round.players[(i - 1) % round.players.length]
-                    }} bids: ({{ round.bids[i].join(' * ') }})</span>
+                        round.players[(i - 2) % round.players.length].index + 1
+                    }} bids: <span class="monospace">({{ round.bids[i].join(' * ') }})</span></span>
                 <vue-mathjax v-if="formula !== null" :formula="formula"/>
             </v-sheet>
             <v-sheet rounded class="line-sheet" v-if="round">
                 <span class="line-number font-weight-bold mr-3">{{ formulas.length + 1 }}</span>
                 <span class="line-number">
                     Player {{
-                        round.players[challengingPlayer]
+                        round.players[challengingPlayer].index + 1
                     }} has challenged player {{
-                        round.players[(challengingPlayer - 1) % round.players.length]
+                        round.players[((challengingPlayer - 1) + round.players.length) % round.players.length].index + 1
                     }}
                 </span>
             </v-sheet>
@@ -43,7 +43,7 @@ export default {
     },
     computed: {
         challengingPlayer() {
-            return (this.round.bids.length - 1) % this.round.players.length;
+            return (this.round.bids.length - 2) % this.round.players.length;
         },
         formulas() {
             if (this.logicLines)
@@ -72,5 +72,11 @@ export default {
 
 .line-sheet {
     padding: 5px 15px;
+}
+
+.monospace {
+    /*font-family: monospace;*/
+    font-weight: bold;
+    font-style: italic;
 }
 </style>
