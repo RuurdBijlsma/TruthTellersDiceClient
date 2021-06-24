@@ -81,6 +81,8 @@ export default {
                     rounds.push(round);
                 }
                 console.log(rounds);
+                this.$store.commit('viewedRound', 0);
+                this.$store.commit('viewedStep', 0);
                 this.$store.commit('winner', gameData.players[gameData.players.length - 1][0]);
                 this.$store.commit('rounds', rounds);
             });

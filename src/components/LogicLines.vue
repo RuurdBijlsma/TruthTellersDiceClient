@@ -6,14 +6,16 @@
         <v-card-text>
             <v-sheet rounded class="mb-2 line-sheet" v-for="(formula, i) in formulas" :key="i"
                      :color="viewedStep === i ? 'primary' : 'default'">
+                <span class="line-number font-weight-bold mr-3">{{ i + 1 }}</span>
                 <span class="line-number mr-5" v-if="i === 0">Initial: </span>
                 <span class="line-number mr-5" v-else-if="i === 1">Look at dice: </span>
                 <span class="line-number mr-5" v-else>Player {{
                         round.players[(i - 1) % round.players.length]
                     }} bids: ({{ round.bids[i].join(' * ') }})</span>
-                <vue-mathjax :formula="formula"/>
+                <vue-mathjax v-if="formula !== null" :formula="formula"/>
             </v-sheet>
             <v-sheet rounded class="line-sheet" v-if="round">
+                <span class="line-number font-weight-bold mr-3">{{ formulas.length + 1 }}</span>
                 <span class="line-number">
                     Player {{
                         round.players[challengingPlayer]
@@ -45,7 +47,7 @@ export default {
         },
         formulas() {
             if (this.logicLines)
-                return this.logicLines.map(l => `$${l}$`);
+                return this.logicLines.map(l => l === '' || l === null ? null : `$${l}$`);
             return [];
         },
         logicLines() {

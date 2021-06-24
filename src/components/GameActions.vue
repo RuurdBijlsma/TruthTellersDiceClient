@@ -3,6 +3,7 @@
         <div class="left-actions">
             <div class="selectors">
                 <v-select hide-details v-model="strategy" dense class="selector" :items="strategyItems"
+                          title="Bidding strategy"
                           label="Strategy"/>
                 <v-select hide-details v-model="nPlayers" dense class="selector" :items="playersItems"
                           label="# Players"/>

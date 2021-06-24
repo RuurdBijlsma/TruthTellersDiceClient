@@ -17,7 +17,7 @@ export default new Vuex.Store({
         socket: null,
         viewedRound: 0,
         viewedStep: 0,
-        simulationResults:null,
+        simulationResults: null,
     },
     mutations: {
         strategy: (state, strategy) => state.game.strategy = strategy,
