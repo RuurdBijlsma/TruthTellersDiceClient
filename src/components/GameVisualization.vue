@@ -74,7 +74,7 @@ export default {
         },
         getDiceImgUrl(diceId) {
             return '../assets/dice_' + diceId + ".png"
-        }
+        },
     }
 }
 </script>
