@@ -24,10 +24,10 @@ export default {
     props: ["index", "round", "player"],
     methods: {
         getPlayerImgUrl(playerId) {
-            return '../assets/player' + playerId + ".png"
+            return './assets/player' + playerId + ".png"
         },
         getDiceImgUrl(diceId) {
-            return '../assets/dice_' + diceId + ".png"
+            return './assets/dice_' + diceId + ".png"
         }
     }
 }
