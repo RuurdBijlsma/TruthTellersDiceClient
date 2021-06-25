@@ -1,10 +1,8 @@
 <template>
 
     <v-card outlined class="game-vis">
-      <v-card-title>
-          Game visualisation
-      </v-card-title>
-        
+
+      
       <v-container>   
         <div v-if="round.players.length <= 2">
           <v-row>
@@ -49,6 +47,9 @@
           </v-row>          
         </div>             
       </v-container>
+
+
+
     </v-card>
 </template>
 
@@ -65,15 +66,8 @@ export default {
             simulationResults: state => state.simulationResults,
             winner: state => state.game.winner,
         }),
-    },
-    methods: {
-      getPlayerImgUrl(playerId) {        
-        return '../assets/player' + playerId + ".png"
-      },
-      getDiceImgUrl(diceId) {
-        return '../assets/dice_' + diceId + ".png"
-      }
     }
+
 }
 </script>
 

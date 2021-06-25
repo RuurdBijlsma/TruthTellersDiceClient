@@ -1,15 +1,15 @@
 <template>    
-    <div class="player-item">        
-        <div class="align-center">Player {{player + 1}}</div>
+    <div class="player-item">       
+        <div class="align-center" font-family: Georgia>Agent {{player + 1}}</div>
         <v-col align="center">
-            <v-avatar color="green" size="75">
+            <v-avatar size="100">
             <img :src="getPlayerImgUrl(index + 1)" :alt="'Player' + (index+1)" />
             </v-avatar>
         </v-col>
         <v-col align="center">
             <v-row>
             <v-col v-for="(dice, i) in round.dice[index]" :key="'dice-' + i" align="center">
-                <v-avatar size="42">
+                <v-avatar size="30">
                 <img :src="getDiceImgUrl(dice)" :alt="'Dice' + (index+1)" />
                 </v-avatar>
             </v-col>
@@ -23,7 +23,7 @@ export default {
     props: ["index", "round", "player"], 
     methods: {
       getPlayerImgUrl(playerId) {        
-        return '../assets/player' + playerId + ".png"
+        return '../assets/agent_' + playerId + ".png"
       },
       getDiceImgUrl(diceId) {
         return '../assets/dice_' + diceId + ".png"
