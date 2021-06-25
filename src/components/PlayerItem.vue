@@ -1,6 +1,6 @@
 <template>
     <div class="player-item">
-        <div class="align-center">Player {{ player.index + 1 }}: <span
+        <div class="align-center">Agent {{ player.index + 1 }}: <span
             class="player-strategy">{{ player.strategy }}</span></div>
         <v-col align="center">
             <v-avatar color="green" size="75">
