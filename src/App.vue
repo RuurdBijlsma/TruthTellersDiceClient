@@ -5,7 +5,7 @@
             <v-spacer/>
             <v-btn class="mr-3" text to="/" exact>Home</v-btn>
             <v-btn text to="/simulate">Simulate</v-btn>
-            <v-btn text to="/about">About</v-btn>
+            <v-btn text to="/about">Report</v-btn>
             <v-spacer/>
             <v-menu offset-y :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
